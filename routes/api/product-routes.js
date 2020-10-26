@@ -7,9 +7,15 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
-  console.log('___One Product___');
+  console.log('==========ALL PRODUCTS===========');
   Product.findAll({
+    // attributes: ['id', 'product_name', 'price', 'stock'],
+    // order: [['product_name', 'ASC']],
     include: [
+      // {
+      //   model: Category,
+      //   attributes: ['category_name']
+      // },
       Category, 
       {
         model: Tag,
@@ -28,7 +34,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
-  console.log('__ Single Product___');
+  console.log('==========ONE PRODUCT===========');
   Product.findOne({
     where: {
       id: req.params.id
@@ -48,7 +54,7 @@ router.get('/:id', (req, res) => {
   })
     .then(dbProductData => {
       if (!dbProductData) {
-        res.status(404).json({ message: 'No post found with this id, try again.' });
+        res.status(404).json({ message: 'No post found with this id' });
         return;
       }
       res.json(dbProductData);
@@ -142,7 +148,7 @@ router.delete('/:id', (req, res) => {
   })
     .then(dbProductData => {
       if (!dbProductData) {
-        res.status(404).json({ message: 'No post found with this id, try again.' });
+        res.status(404).json({ message: 'No post found with this id' });
         return;
       }
       res.json(dbProductData);

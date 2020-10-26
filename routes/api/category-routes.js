@@ -2,10 +2,11 @@ const router = require('express').Router();
 const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
-
+// get all categories
 router.get('/', (req, res) => {
-  // find all categories, including associated Products
-  console.log('___Categories___');
+  // find all categories
+  // be sure to include its associated Products
+  console.log('=========CATEGORIES=============');
   Category.findAll({
     attributes: ['id', 'category_name'],
     order: [['category_name', 'ASC']],
@@ -22,9 +23,10 @@ router.get('/', (req, res) => {
       res.status(500).json(err);
     });
 });
-
+// get one category
 router.get('/:id', (req, res) => {
-  // find one category by its `id` value, including associated Products
+  // find one category by its `id` value
+  // be sure to include its associated Products
   Category.findOne({
     attributes: ['id', 'category_name'],
     where: {
@@ -39,7 +41,7 @@ router.get('/:id', (req, res) => {
   })
   .then(dbCategoryData => {
     if (!dbCategoryData) {
-      res.status(404).json({ message: 'No Category found with this id, try again.' });
+      res.status(404).json({ message: 'No Category found with this id' });
       return;
     }
     res.json(dbCategoryData);
@@ -49,7 +51,7 @@ router.get('/:id', (req, res) => {
     res.status(500).json(err);
   });
 });
-
+// create a category
 router.post('/', (req, res) => {
   // create a new category
   Category.create({
@@ -61,7 +63,7 @@ router.post('/', (req, res) => {
       res.status(500).json(err);
     });
 });
-
+// edit a category
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
   Category.update(req.body, {
@@ -71,7 +73,7 @@ router.put('/:id', (req, res) => {
   })
     .then(dbCategoryData => {
       if (!dbCategoryData[0]) {
-        res.status(404).json({ message: 'No Category found with this id, try again.' });
+        res.status(404).json({ message: 'No Category found with this id' });
         return;
       }
       res.json(dbCategoryData);
@@ -81,7 +83,7 @@ router.put('/:id', (req, res) => {
       res.status(500).json(err);
     });
 });
-
+// delete a category
 router.delete('/:id', (req, res) => {
   // delete a category by its `id` value
   Category.destroy({
