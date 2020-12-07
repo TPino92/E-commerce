@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const { Product, Category, Tag, ProductTag } = require('../../models');
+const { restore } = require('../../models/Tag');
+const sequelize = require('../../config/connection');
 
 // The `/api/products` endpoint
 
@@ -7,54 +9,45 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all products
   // be sure to include its associated Category and Tag data
-  console.log('==========ALL PRODUCTS===========');
-  Product.findAll({
-    // attributes: ['id', 'product_name', 'price', 'stock'],
-    // order: [['product_name', 'ASC']],
-    include: [
-      // {
-      //   model: Category,
-      //   attributes: ['category_name']
-      // },
-      Category, 
+    Product.findAll({
+      include: [Category, 
       {
         model: Tag,
-        through: ProductTag
+        through: ProductTag,
       }
-    ]
-  })
+      ]
+    })
     .then(dbProductData => res.json(dbProductData))
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    });
+    })
 });
 
 // get one product
 router.get('/:id', (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
-  console.log('==========ONE PRODUCT===========');
-  Product.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
-    include: [
-      {
-        model: Category,
-        attributes: ['category_name']
+    Product.findOne({
+      where: {
+        id: req.params.id
       },
-      {
-        model: Tag,
-        attributes: ['tag_name'],
-        through: ProductTag
-      }
-    ]
-  })
+      attributes: ['id', 'product_name', 'price', 'stock'],
+      include: [
+        {
+          model: Category,
+          attributes: ['category_name'],
+        },
+        {
+          model: Tag,
+          attributes: ['tag_name'],
+          through: ProductTag
+        }
+      ]
+    })
     .then(dbProductData => {
       if (!dbProductData) {
-        res.status(404).json({ message: 'No post found with this id' });
+        res.status(404).json({ message: 'No product found with this id' });
         return;
       }
       res.json(dbProductData);
@@ -62,7 +55,7 @@ router.get('/:id', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    });
+    })
 });
 
 // create new product
@@ -141,14 +134,14 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // delete one product by its `id` value
-  Product.destroy({
-    where: {
-      id: req.params.id
-    }
-  })
+    Product.destroy({
+      where: {
+        id: req.params.id
+      }
+    })
     .then(dbProductData => {
       if (!dbProductData) {
-        res.status(404).json({ message: 'No post found with this id' });
+        res.status(404).json({ message: 'No product found with this id' });
         return;
       }
       res.json(dbProductData);
@@ -156,7 +149,7 @@ router.delete('/:id', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
-    });
+    })
 });
 
 module.exports = router;
